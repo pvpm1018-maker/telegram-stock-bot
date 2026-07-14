@@ -1,32 +1,29 @@
-from stock import get_stock_price
-
 import json
+from stock import get_stock_price
 
 
 def create_briefing():
 
     with open("portfolio.json", encoding="utf-8") as f:
-
         portfolio = json.load(f)
 
-    message = "📈 JH Portfolio AI Bot\n\n"
+    message = "📈 JH Portfolio AI Bot\n"
+    message += "=" * 24 + "\n\n"
 
-    for stock in portfolio["stocks"]:
+    for item in portfolio["stocks"]:
 
-        info = get_stock_price(stock["ticker"])
+        result = get_stock_price(item["ticker"])
 
-        if info is None:
-
+        if result is None:
+            message += f"❌ {item['name']}\n\n"
             continue
 
+        icon = "🔺" if result["percent"] >= 0 else "🔻"
+
         message += (
-
-            f"📌 {stock['name']}\n"
-
-            f"현재가 : {info['price']:,}원\n"
-
-            f"등락률 : {info['percent']}%\n\n"
-
+            f"📌 {item['name']}\n"
+            f"현재가 : {result['price']:,}원\n"
+            f"{icon} {result['percent']}%\n\n"
         )
 
     return message
