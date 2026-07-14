@@ -1,3 +1,5 @@
+print("=== NEW BOT VERSION ===")
+
 from briefing import create_briefing
 from telegram_sender import send_message
 
