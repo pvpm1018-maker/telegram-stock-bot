@@ -1,33 +1,27 @@
-import yfinance as yf
-
-# portfolio.json의 종목코드와 연결될 티커
-TICKERS = {
-    "000660": "000660.KS",   # SK하이닉스
-    "005930": "005930.KS",   # 삼성전자
-    "028260": "028260.KS",   # 삼성물산
-    "031330": "031330.KQ",   # 에스에이엠티
-    "034220": "034220.KS",   # LG디스플레이
-    "240810": "240810.KQ",   # 원익IPS
-    "402340": "402340.KS"    # SK스퀘어
-}
+from pykrx import stock
+from datetime import datetime
 
 
-def get_stock_price(code):
-    ticker = yf.Ticker(TICKERS[code])
+def get_stock_price(ticker):
+    today = datetime.today().strftime("%Y%m%d")
 
-    data = ticker.history(period="2d")
+    try:
+        df = stock.get_market_ohlcv_by_date(today, today, ticker)
 
-    if len(data) < 2:
+        if df.empty:
+            return None
+
+        current = int(df.iloc[-1]["종가"])
+        open_price = int(df.iloc[-1]["시가"])
+
+        change = current - open_price
+        percent = round(change / open_price * 100, 2)
+
+        return {
+            "price": current,
+            "change": change,
+            "percent": percent
+        }
+
+    except Exception:
         return None
-
-    current = float(data["Close"].iloc[-1])
-    previous = float(data["Close"].iloc[-2])
-
-    change = current - previous
-    percent = (change / previous) * 100
-
-    return {
-        "price": round(current),
-        "change": round(change, 2),
-        "percent": round(percent, 2)
-    }
