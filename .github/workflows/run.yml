@@ -8,18 +8,30 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - name: 저장소 가져오기
+      - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Python 설치
+      - name: Set up Python
         uses: actions/setup-python@v5
         with:
           python-version: "3.11"
 
-      - name: 라이브러리 설치
-        run: pip install -r requirements.txt
+      - name: Install dependencies
+        run: |
+          python --version
+          pip install -r requirements.txt
 
-      - name: 봇 실행
+      - name: Show bot.py
+        run: |
+          echo "===== bot.py ====="
+          cat bot.py
+
+      - name: Show briefing.py
+        run: |
+          echo "===== briefing.py ====="
+          cat briefing.py
+
+      - name: Run bot
         env:
           BOT_TOKEN: ${{ secrets.BOT_TOKEN }}
           CHAT_ID: ${{ secrets.CHAT_ID }}
